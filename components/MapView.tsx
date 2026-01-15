@@ -98,7 +98,7 @@ export default function MapView() {
   // useMemo prevents recalculating on every re-render unless budget or data changes
   const filteredEateries = useMemo(() => {
     return eateries.filter((res) => res.avg_price <= maxBudget);
-  }, [maxBudget]);
+  }, [maxBudget, eateries]);
 
   return (
     <div style={{ height: "100vh", width: "100%", position: "relative" }}>
@@ -140,7 +140,7 @@ export default function MapView() {
       {/* ============================
           Modal (above map)
          ============================ */}
-      <div className="absolute top-0 right-0 max-w-sm overflow-y-scroll custom-scrollbar w-[420px] z-999 flex flex-col gap-4 pt-4 pb-4 px-2">
+      <div className="absolute top-0 right-0 max-w-sm overflow-y-scroll custom-scrollbar w-[90%] z-999 flex flex-col gap-4 pt-4 pb-4 px-2">
         {infoModal && activeEatery && (
           <div className="bg-white mt-18 rounded-3xl overflow-hidden shadow-2xl transition-all duration-300 border border-gray-100 max-w-sm">
             {/* Image Header Section */}
