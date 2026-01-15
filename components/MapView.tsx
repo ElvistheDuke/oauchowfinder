@@ -2,7 +2,7 @@
 
 import "leaflet/dist/leaflet.css";
 import dynamic from "next/dynamic";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import type { DivIcon } from "leaflet";
 // import restaurants from "@/public/restaurants.json";
 import Image from "next/image";
@@ -11,6 +11,8 @@ import { ClockIcon } from "@heroicons/react/24/outline";
 import { StarIcon } from "@heroicons/react/24/solid";
 import type { Eatery } from "@/lib/models/eatery";
 import samplerestaurant from "../public/sample restaurant.jpg";
+import { ChevronLeft, ChevronRight, MapPinIcon } from "lucide-react";
+import BudgetFilter from "./BudgetFilter";
 
 /* ============================
    Dynamic React-Leaflet imports
@@ -45,6 +47,7 @@ export default function MapView() {
   const [activeEatery, setActiveEatery] = useState<Eatery | null>(null);
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
   const [eateries, setEateries] = useState<Eatery[]>([]);
+  const [maxBudget, setMaxBudget] = useState<number>(3000);
 
   // Fetch eateries
   useEffect(() => {
@@ -91,6 +94,11 @@ export default function MapView() {
     };
   }, []);
 
+  // useMemo prevents recalculating on every re-render unless budget or data changes
+  const filteredEateries = useMemo(() => {
+    return eateries.filter((res) => res.avg_price <= maxBudget);
+  }, [maxBudget]);
+
   return (
     <div style={{ height: "100vh", width: "100%", position: "relative" }}>
       {/* ============================
@@ -110,7 +118,7 @@ export default function MapView() {
 
         {mapReady &&
           icon &&
-          eateries.map((eatery) => (
+          filteredEateries.map((eatery) => (
             <Marker
               key={eatery._id}
               position={[eatery.coords[0], eatery.coords[1]]}
@@ -125,12 +133,14 @@ export default function MapView() {
           ))}
       </MapContainer>
 
+      <BudgetFilter onBudgetChange={(val: number) => setMaxBudget(val)} />
+
       {/* ============================
           Modal (above map)
          ============================ */}
-      <div className="absolute top-0 right-0 max-w-screen overflow-y-scroll custom-scrollbar w-[420px] z-999 flex flex-col gap-4 pt-4 pb-4 px-2">
+      <div className="absolute top-0 right-0 max-w-sm overflow-y-scroll custom-scrollbar w-[420px] z-999 flex flex-col gap-4 pt-4 pb-4 px-2">
         <div className="bg-white p-4  rounded shadow-lg shadow-black/20">
-          <div className="flex gap-1 items-center">
+          <div className="flex gap-1 items-center max-w-sm">
             <Image
               src={logo}
               alt="Oauchow Finder Logo"
@@ -138,8 +148,8 @@ export default function MapView() {
               height={40}
             />
             <h1 className="text-xl font-bold">
-              <span className="text-[#1F455F]">OAU</span>{" "}
-              <span className="text-[#D49851]">ChowFinder</span>
+              <span className="text-balance">OAU</span>{" "}
+              <span className="text-accent">ChowFinder</span>
             </h1>
           </div>
 
@@ -147,113 +157,159 @@ export default function MapView() {
         </div>
 
         {infoModal && activeEatery && (
-          <div
-            className="
-                     bg-white rounded shadow-lg shadow-black/20
-                     transition-opacity duration-300
-                   "
-          >
-            <div className="relative w-full h-40 overflow-hidden rounded mb-2">
+          <div className="bg-white rounded-3xl overflow-hidden shadow-2xl transition-all duration-300 border border-gray-100 max-w-sm">
+            {/* Image Header Section */}
+            <div className="relative w-full h-52 overflow-hidden group">
               <Image
                 src={
-                  activeEatery.imageUrl[currentImageIndex]
-                    ? activeEatery.imageUrl[currentImageIndex]
-                    : samplerestaurant
+                  activeEatery.imageUrl?.[currentImageIndex] || samplerestaurant
                 }
-                alt={`${activeEatery.name} image ${currentImageIndex + 1}`}
+                alt={`${activeEatery.name}`}
                 fill
-                style={{ objectFit: "cover", objectPosition: "center" }}
-                className="rounded"
-                loading="lazy"
+                className="object-cover"
+                priority // Ensures the first image loads immediately
               />
 
-              {/* Arrows */}
-              <button
-                className="absolute top-1/2 left-2 transform -translate-y-1/2 bg-black bg-opacity-50 text-white p-1 rounded"
-                onClick={() =>
-                  setCurrentImageIndex(
-                    (currentImageIndex - 1 + activeEatery.imageUrl.length) %
-                      activeEatery.imageUrl.length
-                  )
-                }
-              >
-                ‹
-              </button>
-              <button
-                className="absolute top-1/2 right-2 transform -translate-y-1/2 bg-black bg-opacity-50 text-white p-1 rounded"
-                onClick={() =>
-                  setCurrentImageIndex(
-                    (currentImageIndex + 1) % activeEatery.imageUrl.length
-                  )
-                }
-              >
-                ›
-              </button>
+              {/* Dark Overlay for text legibility */}
+              <div className="absolute inset-0 bg-gradient-to-t from-black/50 via-transparent to-transparent" />
+
+              {/* Price Tag Badge */}
+              <div className="absolute bottom-3 left-4 bg-orange-500 text-white px-3 py-1 rounded-full text-sm font-bold shadow-lg">
+                Avg. ₦{activeEatery.avg_price}
+              </div>
+
+              {/* FIXED NAVIGATION BUTTONS */}
+              {activeEatery.imageUrl?.length > 1 && (
+                <>
+                  <button
+                    type="button" // Prevents accidental form submission
+                    className="absolute left-3 top-1/2 -translate-y-1/2 bg-black/30 hover:bg-black/60 backdrop-blur-sm text-white w-8 h-8 rounded-full flex items-center justify-center transition-all z-10"
+                    onClick={(e) => {
+                      e.stopPropagation(); // Prevents clicking the card background
+                      setCurrentImageIndex((prev) =>
+                        prev === 0 ? activeEatery.imageUrl.length - 1 : prev - 1
+                      );
+                    }}
+                  >
+                    <ChevronLeft size={20} />
+                  </button>
+
+                  <button
+                    type="button"
+                    className="absolute right-3 top-1/2 -translate-y-1/2 bg-black/30 hover:bg-black/60 backdrop-blur-sm text-white w-8 h-8 rounded-full flex items-center justify-center transition-all z-10"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      setCurrentImageIndex(
+                        (prev) => (prev + 1) % activeEatery.imageUrl.length
+                      );
+                    }}
+                  >
+                    <ChevronRight size={20} />
+                  </button>
+
+                  {/* Pagination Dots (Visual Feedback) */}
+                  <div className="absolute bottom-3 right-4 flex gap-1.5 z-10">
+                    {activeEatery.imageUrl.map((_, idx) => (
+                      <div
+                        key={idx}
+                        className={`h-1.5 rounded-full transition-all duration-300 ${
+                          idx === currentImageIndex
+                            ? "w-4 bg-orange-500"
+                            : "w-1.5 bg-white/50"
+                        }`}
+                      />
+                    ))}
+                  </div>
+                </>
+              )}
             </div>
 
-            <div className="p-4 pt-0">
-              <h2 className="text-2xl mb-2">{activeEatery.name}</h2>
-              <div className="flex items-center text-sm">
-                <ClockIcon className="w-5 h-5 inline-block mr-1 text-gray-600" />
-                <p>
-                  {" "}
-                  {`${activeEatery.opening_hours.open} - ${activeEatery.opening_hours.close}`}
-                </p>
-                <StarIcon className="w-5 h-5 inline-block ml-4 mr-1 text-yellow-500" />
-                <p>{activeEatery.rating} / 5</p>
+            {/* Content Section */}
+            <div className="p-5">
+              {/* Header */}
+              <div className="flex justify-between items-start mb-3">
+                <h2 className="text-xl font-extrabold text-[#1A365D] tracking-tight">
+                  {activeEatery.name}
+                </h2>
+                <div className="flex items-center bg-yellow-50 px-2 py-1 rounded-lg">
+                  <StarIcon className="w-4 h-4 text-yellow-500 mr-1" />
+                  <span className="text-xs font-bold text-yellow-700">
+                    {activeEatery.rating}
+                  </span>
+                </div>
               </div>
-              <p className="mb-1 text-sm">
-                <strong>Average Cost:</strong> ₦{activeEatery.avg_price}
-              </p>
 
-              {/* Menu */}
-              <div>
-                <h3 className="font-semibold text-foreground ">Menu</h3>
-                <div className="space-y-2">
+              {/* Info Row */}
+              <div className="flex items-center text-gray-500 text-sm mb-5 gap-4">
+                <div className="flex items-center">
+                  <ClockIcon className="w-4 h-4 mr-1 text-[#889E73]" />
+                  <span>
+                    {activeEatery.opening_hours.open} -{" "}
+                    {activeEatery.opening_hours.close}
+                  </span>
+                </div>
+                <div className="flex items-center text-[#889E73] font-medium">
+                  <span className="w-2 h-2 rounded-full bg-green-500 mr-2 animate-pulse"></span>
+                  Open Now
+                </div>
+              </div>
+
+              {/* Menu Section */}
+              <div className="mb-6">
+                <h3 className="text-xs uppercase tracking-widest font-bold text-gray-400 mb-3">
+                  Today&apos;s Menu
+                </h3>
+                <div className="bg-gray-50 rounded-2xl p-3 space-y-1">
                   {activeEatery.menu && activeEatery.menu.length > 0 ? (
-                    activeEatery.menu.map(
-                      (item: { item: string; price: number }, idx: number) => (
+                    activeEatery.menu.slice(0, 3).map(
+                      (
+                        item,
+                        idx // Show first 3 items for clean UI
+                      ) => (
                         <div
                           key={idx}
-                          className="flex items-center justify-between py-2 text-sm border-b border-border last:border-0"
+                          className="flex items-center justify-between py-2 text-sm"
                         >
-                          <span className="text-foreground ">{item.item}</span>
-                          <span className="">₦{item.price}</span>
+                          <span className="text-gray-700 font-medium">
+                            {item.item}
+                          </span>
+                          <span className="text-[#1A365D] font-bold">
+                            ₦{item.price}
+                          </span>
                         </div>
                       )
                     )
                   ) : (
-                    <p className="text-muted-foreground text-sm">
-                      No menu items available
+                    <p className="text-gray-400 text-xs italic py-2">
+                      No menu available
                     </p>
                   )}
                 </div>
               </div>
 
-              {/* Open in Google Maps button */}
-              <button
-                className="mt-2 px-3 py-1 bg-blue-600 text-white rounded w-full"
-                onClick={() => {
-                  const { latitude, longitude } = activeEatery.coords.reduce(
-                    (acc, coord, index) => {
-                      if (index === 0) acc.latitude = coord;
-                      if (index === 1) acc.longitude = coord;
-                      return acc;
-                    },
-                    { latitude: 0, longitude: 0 }
-                  );
-                  const url = `https://www.google.com/maps?q=${latitude},${longitude}`;
-                  window.open(url, "_blank"); // opens in a new tab
-                }}
-              >
-                Open in Google Maps
-              </button>
-              <button
-                className="mt-2 px-3 py-1 bg-black text-white rounded"
-                onClick={() => setInfoModal(false)}
-              >
-                Close
-              </button>
+              {/* Action Buttons */}
+              <div className="flex gap-2">
+                <button
+                  className="flex-1 bg-[#1A365D] hover:bg-[#132a4a] text-white py-3 rounded-xl font-bold text-sm transition-all shadow-md active:scale-95 flex items-center justify-center gap-2"
+                  onClick={() => {
+                    const [lat, lng] = activeEatery.coords;
+                    window.open(
+                      `https://www.google.com/maps/dir/?api=1&destination=${lat},${lng}`,
+                      "_blank"
+                    );
+                  }}
+                >
+                  <MapPinIcon className="w-4 h-4" />
+                  Get Directions
+                </button>
+
+                <button
+                  className="px-4 py-3 bg-gray-100 hover:bg-gray-200 text-gray-600 rounded-xl font-bold text-sm transition-all"
+                  onClick={() => setInfoModal(false)}
+                >
+                  Close
+                </button>
+              </div>
             </div>
           </div>
         )}
