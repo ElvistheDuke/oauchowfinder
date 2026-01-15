@@ -6,13 +6,14 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import type { DivIcon } from "leaflet";
 // import restaurants from "@/public/restaurants.json";
 import Image from "next/image";
-import logo from "../public/transparent-logo.png";
+// import logo from "../public/transparent-logo.png";
 import { ClockIcon } from "@heroicons/react/24/outline";
 import { StarIcon } from "@heroicons/react/24/solid";
 import type { Eatery } from "@/lib/models/eatery";
 import samplerestaurant from "../public/sample restaurant.jpg";
 import { ChevronLeft, ChevronRight, MapPinIcon } from "lucide-react";
 import BudgetFilter from "./BudgetFilter";
+import AppHeader from "./AppHeader";
 
 /* ============================
    Dynamic React-Leaflet imports
@@ -134,30 +135,14 @@ export default function MapView() {
       </MapContainer>
 
       <BudgetFilter onBudgetChange={(val: number) => setMaxBudget(val)} />
+      <AppHeader />
 
       {/* ============================
           Modal (above map)
          ============================ */}
       <div className="absolute top-0 right-0 max-w-sm overflow-y-scroll custom-scrollbar w-[420px] z-999 flex flex-col gap-4 pt-4 pb-4 px-2">
-        <div className="bg-white p-4  rounded shadow-lg shadow-black/20">
-          <div className="flex gap-1 items-center max-w-sm">
-            <Image
-              src={logo}
-              alt="Oauchow Finder Logo"
-              width={40}
-              height={40}
-            />
-            <h1 className="text-xl font-bold">
-              <span className="text-balance">OAU</span>{" "}
-              <span className="text-accent">ChowFinder</span>
-            </h1>
-          </div>
-
-          {/* <p>Click on a marker to see restaurant details.</p> */}
-        </div>
-
         {infoModal && activeEatery && (
-          <div className="bg-white rounded-3xl overflow-hidden shadow-2xl transition-all duration-300 border border-gray-100 max-w-sm">
+          <div className="bg-white mt-18 rounded-3xl overflow-hidden shadow-2xl transition-all duration-300 border border-gray-100 max-w-sm">
             {/* Image Header Section */}
             <div className="relative w-full h-52 overflow-hidden group">
               <Image

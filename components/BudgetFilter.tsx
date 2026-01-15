@@ -6,7 +6,7 @@ interface BudgetFilterProps {
 }
 
 const BudgetFilter: React.FC<BudgetFilterProps> = ({ onBudgetChange }) => {
-  const [value, setValue] = useState<number>(1500);
+  const [value, setValue] = useState<number>(3000);
   const [isMinimized, setIsMinimized] = useState<boolean>(false);
 
   const handleSliderChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -17,7 +17,7 @@ const BudgetFilter: React.FC<BudgetFilterProps> = ({ onBudgetChange }) => {
 
   return (
     <div
-      className={`absolute bottom-4 right-4 z-[1000] bg-white/95 backdrop-blur-md rounded-3xl shadow-2xl border border-gray-100 transition-all duration-300 ease-in-out ${
+      className={`absolute top-4 right-4 z-[1000] bg-white/95 backdrop-blur-md rounded-3xl shadow-2xl border border-gray-100 transition-all duration-300 ease-in-out ${
         isMinimized ? "w-48 p-3" : "w-80 p-5"
       }`}
     >
@@ -71,7 +71,7 @@ const BudgetFilter: React.FC<BudgetFilterProps> = ({ onBudgetChange }) => {
           <input
             type="range"
             min="200"
-            max="3000"
+            max="6000"
             step="50"
             value={value}
             onChange={handleSliderChange}
@@ -79,13 +79,13 @@ const BudgetFilter: React.FC<BudgetFilterProps> = ({ onBudgetChange }) => {
           />
           <div className="flex justify-between mt-2 px-1">
             <span className="text-[10px] font-bold text-gray-400">₦200</span>
-            <span className="text-[10px] font-bold text-gray-400">₦3000+</span>
+            <span className="text-[10px] font-bold text-gray-400">₦6000+</span>
           </div>
         </div>
 
         {/* Quick Select Chips */}
         <div className="flex flex-wrap gap-2 mb-4">
-          {[1000, 1500, 2000, 3000].map((amt) => (
+          {[1000, 2000, 3000, 5000].map((amt) => (
             <button
               key={amt}
               onClick={() => {
