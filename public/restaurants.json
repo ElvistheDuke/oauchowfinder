@@ -1,0 +1,46 @@
+[
+  {
+    "id": 0,
+
+    "name": "Spectra",
+
+    "latitude": 7.5186,
+
+    "longitude": 4.5241,
+
+    "hours": "10:00 AM - 11:00 PM",
+
+    "price_level": "moderate",
+    "average_cost": 3000.0,
+
+    "rating": 4.5,
+
+    "menu": [
+      {
+        "item": "Spoon of Rice",
+
+        "price": 400.0
+      },
+      {
+        "item": "Spoon of Beans",
+
+        "price": 400.0
+      },
+      {
+        "item": "Spoon of Fried Rice",
+
+        "price": 400.0
+      },
+
+      {
+        "item": "Meat",
+
+        "price": 500.0
+      }
+    ],
+    "images": [
+      "https://i.pinimg.com/1200x/de/3d/94/de3d9419e12775423c7e8e1bf7927190.jpg",
+      "https://i.pinimg.com/1200x/de/3d/94/de3d9419e12775423c7e8e1bf7927190.jpg"
+    ]
+  }
+]
