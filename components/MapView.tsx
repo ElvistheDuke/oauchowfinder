@@ -102,7 +102,14 @@ export default function MapView() {
   }, [maxBudget, eateries]);
 
   return (
-    <div style={{ height: "100vh", width: "100%", position: "relative" }}>
+    <div
+      style={{
+        height: "100vh",
+        width: "100%",
+        position: "relative",
+        overflow: "hidden",
+      }}
+    >
       {/* ============================
           Map
          ============================ */}
@@ -141,9 +148,9 @@ export default function MapView() {
       {/* ============================
           Modal (above map)
          ============================ */}
-      <div className="absolute top-0 right-0 max-w-sm overflow-y-scroll custom-scrollbar w-[90%] z-999 flex flex-col gap-4 pt-4 pb-4 px-2">
+      <div className="absolute max-h-[90%] top-0 right-0 max-w-sm overflow-y-scroll custom-scrollbar w-[90%] z-999 flex flex-col gap-4 pt-4 pb-4 px-2">
         {infoModal && activeEatery && (
-          <div className="bg-white mt-18 rounded-3xl overflow-hidden shadow-2xl transition-all duration-300 border border-gray-100 max-w-sm">
+          <div className="bg-white mt-18 rounded-3xl overflow-hidden overflow-y-scroll shadow-2xl transition-all duration-300 border border-gray-100 max-w-sm">
             {/* Image Header Section */}
             <div className="relative w-full h-52 overflow-hidden group">
               <Image
