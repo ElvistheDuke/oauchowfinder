@@ -14,6 +14,7 @@ import samplerestaurant from "../public/sample restaurant.jpg";
 import { ChevronLeft, ChevronRight, MapPinIcon } from "lucide-react";
 import BudgetFilter from "./BudgetFilter";
 import AppHeader from "./AppHeader";
+import cloudinaryLoader from "@/lib/cloudinaryLoader";
 
 /* ============================
    Dynamic React-Leaflet imports
@@ -149,6 +150,7 @@ export default function MapView() {
                 src={
                   activeEatery.imageUrl?.[currentImageIndex] || samplerestaurant
                 }
+                loader={cloudinaryLoader}
                 alt={`${activeEatery.name}`}
                 fill
                 className="object-cover"
@@ -246,7 +248,7 @@ export default function MapView() {
                 </h3>
                 <div className="bg-gray-50 rounded-2xl p-3 space-y-1">
                   {activeEatery.menu && activeEatery.menu.length > 0 ? (
-                    activeEatery.menu.slice(0, 3).map(
+                    activeEatery.menu.map(
                       (
                         item,
                         idx // Show first 3 items for clean UI

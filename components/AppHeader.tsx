@@ -40,12 +40,12 @@ const AppHeader: React.FC = () => {
           isCollapsed ? "opacity-0 hidden w-0" : "opacity-100 visible w-full"
         }`}
       >
-        <div className="flex flex-col">
-          <h1 className="text-sm font-black text-[#1A365D] whitespace-nowrap">
+        <div className="flex flex-col ml-1">
+          <h1 className="text-sm font-black text-[#1A365D] whitespace-nowrap ">
             OAU <span className="text-[#F26522]">ChowFinder</span>
           </h1>
           <p className="text-[8px] font-bold text-[#889E73] uppercase tracking-tighter">
-            Surveying & Geo-informatics
+            Powered by ElvistheSaint
           </p>
         </div>
 
