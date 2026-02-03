@@ -21,12 +21,12 @@ import cloudinaryLoader from "@/lib/cloudinaryLoader";
    ============================ */
 const MapContainer = dynamic(
   () => import("react-leaflet").then((m) => m.MapContainer),
-  { ssr: false }
+  { ssr: false },
 );
 
 const TileLayer = dynamic(
   () => import("react-leaflet").then((m) => m.TileLayer),
-  { ssr: false }
+  { ssr: false },
 );
 
 const Marker = dynamic(() => import("react-leaflet").then((m) => m.Marker), {
@@ -174,7 +174,9 @@ export default function MapView() {
                     onClick={(e) => {
                       e.stopPropagation(); // Prevents clicking the card background
                       setCurrentImageIndex((prev) =>
-                        prev === 0 ? activeEatery.imageUrl.length - 1 : prev - 1
+                        prev === 0
+                          ? activeEatery.imageUrl.length - 1
+                          : prev - 1,
                       );
                     }}
                   >
@@ -187,7 +189,7 @@ export default function MapView() {
                     onClick={(e) => {
                       e.stopPropagation();
                       setCurrentImageIndex(
-                        (prev) => (prev + 1) % activeEatery.imageUrl.length
+                        (prev) => (prev + 1) % activeEatery.imageUrl.length,
                       );
                     }}
                   >
@@ -251,7 +253,7 @@ export default function MapView() {
                     activeEatery.menu.map(
                       (
                         item,
-                        idx // Show first 3 items for clean UI
+                        idx, // Show first 3 items for clean UI.
                       ) => (
                         <div
                           key={idx}
@@ -264,7 +266,7 @@ export default function MapView() {
                             ₦{item.price}
                           </span>
                         </div>
-                      )
+                      ),
                     )
                   ) : (
                     <p className="text-gray-400 text-xs italic py-2">
@@ -282,7 +284,7 @@ export default function MapView() {
                     const [lat, lng] = activeEatery.coords;
                     window.open(
                       `https://www.google.com/maps/dir/?api=1&destination=${lat},${lng}`,
-                      "_blank"
+                      "_blank",
                     );
                   }}
                 >
